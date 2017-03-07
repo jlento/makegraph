@@ -1,0 +1,33 @@
+#!/bin/bash
+
+curdir=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
+
+: ${MAKE:=make}
+: ${MAKE_DB_PARSER:=awk -f ${curdir}/make2deps.awk}
+: ${MAKE_FILTER:=cat}
+: ${DEPS_FILTER:=cat}
+: ${CSS:=${curdir}/dag.css}
+: ${DEPS_TO_SVG:=awk -v css=${CSS} -f ${curdir}/deps2svg.awk}
+: ${OUTDIR:=.}
+
+rm -f deps-*.txt ${OUTDIR}/deps-*.svg
+
+${MAKE} -npk "$@" | ${MAKE_DB_PARSER}
+
+for f in $(ls deps-*.txt); do
+    ${DEPS_TO_SVG} $f > ${OUTDIR}/${f%.txt}.svg
+done
+
+cat > ${OUTDIR}/index.html <<EOF
+<html>
+<body>
+$(for f in $(ls ${OUTDIR}/deps-*.svg); do
+    echo "<object type=\"image/svg+xml\" data=\"$f\">"
+    echo "  $f"
+    echo "</object>"
+  done)
+</body>
+</html>
+EOF
+
+
