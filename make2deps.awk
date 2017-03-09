@@ -36,8 +36,28 @@ function update_depths(node, deps, depths,    b) {
                 }
 }
 
+/^# Variables/ {
+    goals=""
+    next
+}
+
+/^MAKECMDGOALS/ {
+    split($0,a,/:= */)
+    goals=a[2]
+}
+
+/.DEFAULT_GOAL/ && ! goals {
+    split($0,a,/:= */)
+    goals=a[2]
+}
+
+/^MAKELEVEL/ {
+    split($0,a,/:= */)
+    makelevel=a[2]
+}
+
 /^# Files/ {
-    tread = 1
+    readingfiles = 1
     outfile="deps-" ifile++ ".txt"
     delete class
     delete depth
@@ -45,15 +65,17 @@ function update_depths(node, deps, depths,    b) {
     next
 }
 
-/^# files hash-table stats:/ {
-    tread = 0
+/^# Finished Make data base/ {
+    readingfiles = 0
+    print "#goals", goals > outfile
+    print "#makelevel", makelevel > outfile
     delete depth[""]
     for (i in deps)
         print i " : " deps[i] > outfile
     for (i in depth)
         print "#node", i, depth[i], class[i] > outfile
 }
-! tread {
+! readingfiles {
     next
 }
 

@@ -21,11 +21,13 @@ done
 cat > ${OUTDIR}/index.html <<EOF
 <html>
 <body>
-$(for f in $(ls ${OUTDIR}/deps-*.svg); do
-    echo "<object type=\"image/svg+xml\" data=\"$f\">"
-    echo "  $f"
-    echo "</object>"
-  done)
+<h1 style="font: 24px sans-serif;">Make goals</h1>
+$(for f in $(ls deps-*.txt); do
+    href="${f%.txt}.svg"
+    goals="$(sed -n '1s/^#goals //p' $f)"
+    makelevel="$(sed -n '2s/^#makelevel //p' $f)"
+    printf "<p style=\"text-indent:%6spx; font: 12px sans-serif;\"><a href=\"${href}\">${goals}</a></p>\n" $(( makelevel * 50))
+  done | sort -n -k 1.23,1.28)
 </body>
 </html>
 EOF
