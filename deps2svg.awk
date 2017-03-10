@@ -58,8 +58,8 @@ END {
     printf("  </defs>\n")
 #    printf("  <g transform=\"translate(100,100)\">\n")
 
-    for (i in deps) {
-        x[i] = (maxdepth - depth[i] + 1) * depthspacing
+    for (i in depth) {
+        x[i] = (maxdepth - depth[i] +1) * depthspacing
     }
     PROCINFO["sorted_in"] = "@ind_str_asc"
     for (i in depth) {
@@ -75,7 +75,7 @@ END {
                        x[i], y[i], (x[i]+x[a[j]])/2, y[i],
                        (x[i]+x[a[j]])/2, y[a[j]], x[a[j]], y[a[j]])
     }
-    for (i in deps) {
+    for (i in class) {
         printf("  <g class=\"%s\" transform=\"translate(%d,%d)\">\n",
                class[i], x[i], y[i])
         printf("    <circle r=\"%d\"/>\n", fontsize/2)
