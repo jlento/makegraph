@@ -7,18 +7,13 @@ BEGIN {
 
 function uniq_words(words,    n,i,a1,a2,result) {
     n = split(words, a1)
-    if (n ==0) {
-        result ""
-    } else if (n == 1) {
-        result = a1[1]
-    } else {
-        for (i in a1)
-            a2[a1[i]] = a1[i]
-        asort(a2)
-        result = a2[1]
-        for (i=2;i<=length(a2);i++)
-            result = result " " a2[i]
-    }
+    for (i in a1)
+        a2[a1[i]]++
+    for (i in a2)
+        result = result " " i
+    sub(/^ */, "", result)
+    sub(/ *$/, "", result)
+    gsub(/ +/, " ", result)
     return result
 }
 
@@ -27,6 +22,9 @@ function uniq_words(words,    n,i,a1,a2,result) {
     vnodes[$3]++
     for (i=4;i<=NF;i++) class[$2] = class[$2] " " $i
     class[$2] = uniq_words(class[$2] " node")
+}
+
+/^#/ {
     next
 }
 
@@ -70,11 +68,12 @@ END {
     for (i in deps) {
         if (split(deps[i],a))
             for (j in a)
-                printf("  <path class=\"%s\" d=\"M %d,%d C %d,%d %d,%d %d,%d\"/>\n",
-                       (index("phony",class[i] " " class[j]) ? "phony" : class[i]),
+                printf("  <path %s d=\"M %d,%d C %d,%d %d,%d %d,%d\"/>\n",
+                       (index("phony",class[i] " " class[a[j]]) ? "class=\"phony\"" : ""),
                        x[i], y[i], (x[i]+x[a[j]])/2, y[i],
                        (x[i]+x[a[j]])/2, y[a[j]], x[a[j]], y[a[j]])
     }
+
     for (i in class) {
         printf("  <g class=\"%s\" transform=\"translate(%d,%d)\">\n",
                class[i], x[i], y[i])
