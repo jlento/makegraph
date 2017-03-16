@@ -23,9 +23,9 @@ After running `makegraph`, open file `index.html` with browser and click any of 
 
 The nodes, i.e. make targets, are colored.
 
-green : existing pre-requirements and up-to-date files
-red : missing pre-requirements that do not have an associated rule
-blue : targets that make considers for remaking are
+- green : existing pre-requirements and up-to-date files
+- red : missing pre-requirements that do not have an associated rule
+- blue : targets that make considers for remaking are
 
 Phony targets, i.e. targets that are not files, are transparent. Full path
 names of the nodes are shown when cursor is hovered over.
