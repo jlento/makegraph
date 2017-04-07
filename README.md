@@ -30,12 +30,15 @@ The nodes, i.e. make targets, are colored.
 Phony targets, i.e. targets that are not files, are transparent. Full path
 names of the nodes are shown when cursor is hovered over.
 
-Dependencies are shown with lines. The targets are on the right and their dependencies on the left.
+Dependencies are shown with lines. The targets are on the right and their
+dependencies on the left.
 
 ## Advice for makefiles
 
 - there must not be a rule for initial input files, i.e. files that make should
   not consider targets
+- avoid phony targets
+- avoid recursive make
 
 ## Examples
 
