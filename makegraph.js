@@ -49,6 +49,7 @@ class MakeGraph {
             }
 
             for (let target of roots) {
+                m.targets[target].classes.push("goal");
                 addNode(m, target, this);
             }
             for (let node of roots) {
@@ -102,7 +103,7 @@ d3.json("makegraph.json", function(error, makedbs) {
         t = sortedTargets[it];
         nodes.push({
             id : t,
-            class : graph[t].classes,
+            classes : graph[t].classes,
             textAnchor : (graph[t].children.length ? "begin" : "end"),
             x : charWidth * (columnWidthCumulative[depthMax] -
                              columnWidthCumulative[graph[t].depth]),
@@ -128,10 +129,32 @@ d3.json("makegraph.json", function(error, makedbs) {
     var width = charWidth * columnWidth.reduce((a, v) => a + v, 0),
         height = (nTargetsAtDepthMax + 1) * 30;
 
-    var svg = d3.select("body")
-            .append("svg")
-            .attr("preserveAspectRatio", "xMinYMin meet")
-            .attr("viewBox", "0 0 " + width + " " + height);
+    var ww = document.getElementById('body').offsetWidth,
+        wh = window.innerHeight;
+
+    var svg = d3.select("body").append("svg")
+            .attr("width", ww)
+            .attr("height", wh)
+            .append("g")
+            .attr("transform", "translate(" +
+                  (ww/width < wh/height ? 0 : (ww - width * wh / height) / 2) +
+                  "," +
+                  (ww/width < wh/height ? (wh - height * ww / width) / 2: 0) +
+                  ")scale(" +
+                  Math.min(ww/width, wh/height) +
+                  ")")
+            .call(d3.behavior.zoom().on("zoom", zoom))
+            .append("g");
+
+        //.call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+
+    //.attr("preserveAspectRatio", "xMinYMin meet")
+    //.attr("viewBox", "0 0 " + width + " " + height);
+
+    svg.append("rect")
+        .attr("class", "overlay")
+        .attr("width", width)
+        .attr("height", height);
 
     var link = svg
             .selectAll("path")
@@ -153,7 +176,8 @@ d3.json("makegraph.json", function(error, makedbs) {
                 return "translate(" + d.x + "," + d.y + ")";});
 
     node.append("circle")
-        .attr("r", function (d) { return 3; });
+        .attr("r", _ => 3)
+        .style("fill", d => d.classes.includes("goal") ? "black" : "white");
 
     node.append("text")
         .text(function(d) { return lastword(d.id, "/"); })
@@ -165,6 +189,9 @@ d3.json("makegraph.json", function(error, makedbs) {
     node.append("title")
         .text(function(d) { return d.id; });
 
+    function zoom() {
+        svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
 
 }
        );

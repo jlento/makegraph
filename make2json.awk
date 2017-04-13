@@ -32,16 +32,48 @@ function words_as_list(words) {
 
 BEGIN {
     printf("[")
+    pidstack[0] = 0
+    mypid = 0
 }
 
 END {
     print "\n]"
+#    for(i in subreqs) {
+#        for(j in subreqs[i]) {
+#            if(subreqs[i][j]) {
+#                print "pid: " i " target: " j " subreqs: " subreqs[i][j]
+#            }
+#        }
+#    }
+}
+
+/^Live child/ {
+    mypid = $NF
+    pidstack[length(pidstack)] = mypid
+    targetstack[length(pidstack)-2] = gensub(/(^.+\()(.*)(\).+$)/,"\\2","g",$0)
+#    print "livechild: " targetstack[length(pidstack)-2]
+    next
+}
+
+/^Reaping (winning|losing) child/ {
+#    for(i in pidstack) {
+#        print "i: " i " pidstack[i]: " pidstack[i]
+#    }
+#    print "pidstack mypid: " mypid
+    delete pidstack[length(pidstack)-1]
+    mypid = pidstack[length(pidstack)-1]
+#    for(i in pidstack) {
+#        print "i: " i " pidstack[i]: " pidstack[i]
+#    }
+#    print "pidstack mypid: " mypid
+    next
 }
 
 /^# Make data base/ {
     print dbsep "\n  {"
     sep        = ""
     dbsep        = ","
+    makecmdgoals = ""
     next
 }
 
@@ -61,14 +93,22 @@ END {
 
 /^MAKECMDGOALS/ {
     split($0,a,/:= */)
+    makecmdgoals = a[2]
     printf("    \"%s\" : %s,\n", "makecmdgoals",
-           words_as_list(fullpaths(curdir, a[2])))
+           words_as_list(fullpaths(curdir, makecmdgoals)))
     next
 }
 
-/.DEFAULT_GOAL/ {
+/\.DEFAULT_GOAL/ {
     split($0,a,/:= */)
     printf("    \"%s\" : \"%s\",\n", "defaultgoal", fullpaths(curdir, a[2]))
+    if(makecmdgoals) {
+#        print "goal: "makecmdgoals
+        subreqs[pidstack[length(pidstack)-2]][targetstack[length(pidstack)-2]] = subreqs[pidstack[length(pidstack)-2]][targetstack[length(pidstack)-2]] " " makecmdgoals
+    } else {
+#        print "defgoal: " a[2]
+        subreqs[pidstack[length(pidstack)-2]][targetstack[length(pidstack)-2]] = subreqs[pidstack[length(pidstack)-2]][targetstack[length(pidstack)-2]] " " a[2]
+    }
     next
 }
 
@@ -105,8 +145,10 @@ END {
         sep = ","
         printf("      \"%s\" : {\n", fullpaths(curdir, target))
         printf("        \"%s\" : %s,\n", "classes", words_as_list(classes))
-        printf("        \"%s\" : %s}", "prereqs",
-               words_as_list(fullpaths(curdir, prereqs)))
+        printf("        \"%s\" : %s}\n", "prereqs",
+               words_as_list(fullpaths(curdir, prereqs " " subreqs[mypid][target])))
+#        printf("        \"%s\" : %s}", "subreqs",
+#               words_as_list(fullpaths(curdir, subreqs[mypid][target])))
     }
     target  = ""
     classes = ""

@@ -1,13 +1,17 @@
 body {
-    display: inline-block;
-    position: relative;
+//    display: inline-block;
+//    position: relative;
     width: 100%;
-    vertical-align: top;
-    overflow: scroll;
+//    vertical-align: top;
+//    overflow: hide;
 }
 
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
 
-circle {fill: white; stroke: steelblue; stroke-width: 3px;}
+circle {stroke: steelblue; stroke-width: 3px;}
       .not-a-target circle {stroke: green;}
       .not-a-target.missing circle {stroke: red;}
       text {font: 12px sans-serif;}
