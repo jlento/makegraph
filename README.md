@@ -12,10 +12,10 @@ Please consider the current state as a "scetch" or proof-of-concept.
 
 Use script `makegraph` to
 
-(1) dry-run GNU Make instead of actually running `make`
-(2) convert the GNU Make "debug" and "data base" output to JSON
-(3) wrap the JSON data into a single html file, along with the JavaScript code
-    that takes care of the visualization
+1. dry-run GNU Make instead of actually running `make`
+2. convert the GNU Make "debug" and "data base" output to JSON
+3. wrap the JSON data into a single html file, along with the JavaScript code
+   that takes care of the visualization
 
 The arguments to `makegraph` are passed to `make`, so you can run for example
 
