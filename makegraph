@@ -3,33 +3,27 @@
 curdir=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
 : ${MAKE:=make}
-: ${MAKE_DB_PARSER:=awk -f ${curdir}/make2deps.awk}
-: ${MAKE_FILTER:=cat}
-: ${DEPS_FILTER:=cat}
-: ${CSS:=${curdir}/dag.css}
-: ${DEPS_TO_SVG:=awk -v css=${CSS} -f ${curdir}/deps2svg.awk}
-: ${OUTDIR:=.}
+: ${MAKE_PARSER:=awk -f ${curdir}/make2json.awk}
 
-rm -f deps-*.txt ${OUTDIR}/deps-*.svg
-
-${MAKE} -npk "$@" | ${MAKE_DB_PARSER}
-
-for f in $(ls deps-*.txt); do
-    ${DEPS_TO_SVG} $f > ${OUTDIR}/${f%.txt}.svg
-done
-
-cat > ${OUTDIR}/index.html <<EOF
+{
+cat <<EOF
+<!DOCTYPE html>
 <html>
-<body>
-<h1 style="font: 24px sans-serif;">Make goals</h1>
-$(for f in $(ls deps-*.txt); do
-    href="${f%.txt}.svg"
-    goals="$(sed -n '1s/^#goals //p' $f)"
-    makelevel="$(sed -n '2s/^#makelevel //p' $f)"
-    printf "<p style=\"text-indent:%6spx; font: 12px sans-serif;\"><a href=\"${href}\">${goals}</a></p>\n" $(( makelevel * 50))
-  done | sort -n -k 1.23,1.28)
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            $(cat ${curdir}/dag.css)
+        </style>
+        <script>
+            $(curl -s https://d3js.org/d3.v3.min.js)
+        </script>
+    </head>
+    <body id="body">
+        <script>
+            var makedbs = $(${MAKE} --debug=jobs -npk "$@" | ${MAKE_PARSER})
+            $(cat ${curdir}/makegraph.js)
+        </script>
+    </body>
 </html>
 EOF
-
-
+}

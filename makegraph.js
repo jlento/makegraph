@@ -59,8 +59,8 @@ class MakeGraph {
     }
 }
 
-d3.json("makegraph.json", function(error, makedbs) {
-    if (error) throw error;
+//d3.json("makegraph.json", function(error, makedbs) {
+//    if (error) throw error;
 
     const charWidth = 12;
 
@@ -129,8 +129,8 @@ d3.json("makegraph.json", function(error, makedbs) {
     var width = charWidth * columnWidth.reduce((a, v) => a + v, 0),
         height = (nTargetsAtDepthMax + 1) * 30;
 
-    var ww = document.getElementById('body').offsetWidth,
-        wh = window.innerHeight;
+    var ww = document.getElementById('body').offsetWidth - 4,
+        wh = window.innerHeight - 4;
 
     var svg = d3.select("body").append("svg")
             .attr("width", ww)
@@ -172,11 +172,12 @@ d3.json("makegraph.json", function(error, makedbs) {
             .data(nodes)
             .enter()
             .append("g")
+            .attr("class", d => d.classes.join(" "))
             .attr("transform", function(d) {
                 return "translate(" + d.x + "," + d.y + ")";});
 
     node.append("circle")
-        .attr("r", _ => 3)
+        .attr("r", _ => 5)
         .style("fill", d => d.classes.includes("goal") ? "black" : "white");
 
     node.append("text")
@@ -193,5 +194,5 @@ d3.json("makegraph.json", function(error, makedbs) {
         svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
 
-}
-       );
+//}
+//       );

@@ -1,9 +1,6 @@
 body {
-//    display: inline-block;
-//    position: relative;
-    width: 100%;
-//    vertical-align: top;
-//    overflow: hide;
+width: 100%;
+margin: 0 0 0 0;
 }
 
 .overlay {
@@ -12,12 +9,10 @@ body {
 }
 
 circle {stroke: steelblue; stroke-width: 3px;}
-      .not-a-target circle {stroke: green;}
-      .not-a-target.missing circle {stroke: red;}
-      text {font: 12px sans-serif;}
-      g text.fullname {visibility: hidden;}
-      g:hover text.fullname {visibility: visible; opacity: 1; filter: url(#solid); font-weight: bold;}
-      path {fill: none; stroke: #ccc; stroke-width: 2px;}
-      path:hover {stroke: #000;}
-      .phony {stroke-opacity: 0.5;}
-      .phony text {opacity: 0.3;}
+.not-a-target circle {stroke: green;}
+.not-a-target.missing circle {stroke: red;}
+text {font: 12px sans-serif;}
+path {fill: none; stroke: #ccc; stroke-width: 2px;}
+path:hover {stroke: #000;}
+.phony {stroke-opacity: 0.5;}
+.phony text {opacity: 0.5;}

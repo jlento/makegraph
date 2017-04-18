@@ -2,24 +2,51 @@
 
 Visualize GNU Make data base
 
-## How makegraph works
-Currently `makegraph` command
+## Project status
 
-1. dry-runs `make` and outputs the data base in text format
-2. parses the `make` output to simple text format files, one file for
-   each (recursive) make invocation
-3. generates a static svg-images from from the simple text files
-4. generates an index page `index.html` for the svg-images 
+Please consider the current state as a "scetch" or proof-of-concept.
 
-In future, hopefully, `makegraph` command
+## How to draw make dependency graph
 
-1. dry-runs `make` and outputs the data base in text format
-2. parses the `make` output to single json-file
-3. generates the image(s) from the json-data in browser
+### Generate graph
 
-## How to read the svg-files
+Use script `makegraph` to
 
-After running `makegraph`, open file `index.html` with browser and click any of the sub-makes listed to open the svg-images.
+(1) dry-run GNU Make instead of actually running `make`
+(2) convert the GNU Make "debug" and "data base" output to JSON
+(3) wrap the JSON data into a single html file, along with the JavaScript code
+    that takes care of the visualization
+
+The arguments to `makegraph` are passed to `make`, so you can run for example
+
+```bash
+./makegraph -C ../elmerfem/build > index.html
+```
+
+The produced file may be large, depending on the graph, but compresses very
+well, with for example
+
+```bash
+gzip -k index.html
+```
+
+### Open the graph in a browser
+
+Open the file in a browser, for example, with:
+
+```bash
+chromium-browser index.html
+```
+
+Zoom and translate the graph as usual.
+
+
+### Export SVG
+
+Install some "Export SVG" browser plugin to export to plain SVG.
+
+
+## How to interpret the figures
 
 The nodes, i.e. make targets, are colored.
 
@@ -33,26 +60,9 @@ names of the nodes are shown when cursor is hovered over.
 Dependencies are shown with lines. The targets are on the right and their
 dependencies on the left.
 
-## Advice for makefiles
+## Advice for the makefiles
 
-- there must not be a rule for initial input files, i.e. files that make should
-  not consider targets
+- there should not be a rule for initial input files, i.e. files that make
+  should not consider targets
 - avoid phony targets
-- avoid recursive make
-
-## Examples
-
-### Any makefile
-
-Pick any project, which uses GNU Make, and run `makegraph` instead of `make`,
-
-    cd /your/project/build/dir
-    /path/to/makegraph [any make options you would normally give to make]
-
-
-### Simple workflow example
-
-Generate graph with
-
-    cd examples/workflow_1
-    ../../makegraph
+- avoid the use of recursive make
