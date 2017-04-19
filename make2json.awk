@@ -161,6 +161,11 @@ END {
     prereqs = a[2]
 }
 
+/^# *Builtin rule/ {
+    target  = ""
+    next
+}
+
 /^# Not a target:/ {
     classes = classes " not-a-target"
 }

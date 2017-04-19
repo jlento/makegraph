@@ -15,7 +15,7 @@ cat <<EOF
             $(cat ${curdir}/dag.css)
         </style>
         <script>
-            $(curl -s https://d3js.org/d3.v3.min.js)
+            $(test -f d3.v3.min.js || curl -sSO https://d3js.org/d3.v3.min.js ; cat d3.v3.min.js)
         </script>
     </head>
     <body id="body">
