@@ -2,8 +2,11 @@
 
 curdir=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
-: ${MAKE:=make}
+: ${MAKE:=make --debug=jobs -npk}
 : ${MAKE_PARSER:=awk -f ${curdir}/make2json.awk}
+: ${CSS:=cat ${curdir}/dag.css}
+: ${D3JS:=curl -sS https://d3js.org/d3.v3.min.js}
+: ${LAYOUT:=cat ${curdir}/makegraph.js}
 
 cat <<EOF
 <!DOCTYPE html>
@@ -11,16 +14,16 @@ cat <<EOF
     <head>
         <meta charset="UTF-8">
         <style>
-            $(cat ${curdir}/dag.css)
+            $($CSS)
         </style>
         <script>
-            $(curl -sS https://d3js.org/d3.v3.min.js)
+            $($D3JS)
         </script>
     </head>
     <body id="body">
         <script>
-            var makedbs = $(${MAKE} --debug=jobs -npk "$@" | ${MAKE_PARSER})
-            $(cat ${curdir}/makegraph.js)
+            var makedbs = $($MAKE "$@" | $MAKE_PARSER)
+            $($LAYOUT)
         </script>
     </body>
 </html>
