@@ -116,7 +116,7 @@ for (t in graph) {
 var width = charWidth * columnWidth.reduce((a, v) => a + v, 0),
     height = (nTargetsAtDepthMax + 1) * 30;
 
-var ww = document.getElementById('body').offsetWidth - 4,
+var ww = document.getElementsByTagName("body")[0].offsetWidth - 4,
     wh = window.innerHeight - 4;
 
 var svg = d3.select("body").append("svg")

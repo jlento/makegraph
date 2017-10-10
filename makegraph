@@ -20,7 +20,7 @@ cat <<EOF
             $($D3JS)
         </script>
     </head>
-    <body id="body">
+    <body>
         <script>
             var makedbs = $($MAKE "$@" | $MAKE_PARSER)
             $($LAYOUT)
